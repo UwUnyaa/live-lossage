@@ -4,3 +4,12 @@ This repository will contain a basic input display meant for enhancing streams
 using Emacs.
 
 The name is initial for now.
+
+* Things to do
+
+** TODO come up with a better name
+The current one doesn't have a nice ring to it, and contains the word Emacs,
+which would be a redundant word in a feature name.
+
+** TODO make sure I have proper copyright headers and package ones
+I want to be able to install this with my package manager (straight).
