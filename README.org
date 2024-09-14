@@ -1,0 +1,6 @@
+#+TITLE: emacs-input-display
+
+This repository will contain a basic input display meant for enhancing streams
+using Emacs.
+
+The name is initial for now.
