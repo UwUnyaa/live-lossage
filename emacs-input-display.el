@@ -5,6 +5,8 @@
 ;; Copyright (C) 2024 UwUnyaa
 ;; Author: UwUnyaa (https://github.com/UwUnyaa)
 
+;; Package-Requires: (dash)
+
 ;;; license: GPLv3 or newer
 
 ;; This program is free software: you can redistribute it and/or modify it under
@@ -25,6 +27,7 @@
 ;; lossage display, meant for livestreaming and screencasts.
 
 (require 'dframe)
+(require 'dash)
 
 ;;; Customization
 (defgroup emacs-input-display nil
@@ -155,8 +158,10 @@ This mode shouldn't be used manually."
 
 (defun emacs-input-display--get-formatted-losage ()
   "Get losage formatted for display in the buffer."
-  (mapconcat #'emacs-input-display--pretty-print-key
-             (recent-keys)
+  (mapconcat #'identity
+             (-filter #'identity
+                      (-map #'emacs-input-display--pretty-print-key
+                            (recent-keys)))
              " "))
 
 (defun emacs-input-display--command-hook ()
