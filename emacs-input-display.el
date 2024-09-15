@@ -38,15 +38,22 @@
   :group 'emacs-input-display
   :type 'integer)
 
+(defcustom emacs-input-display-font-size
+  200
+  "Size of the font in the input display frame."
+  :group 'emacs-input-display
+  :type 'integer)
+
 (defcustom emacs-input-display-frame-parameters
   `((minibuffer     . nil)
-    (width          . emacs-input-display-width)
-    (height         . 3)
+    (width          . ,emacs-input-display-width)
+    (height         . 2)
     (border-width   . 0)
     (menu-bar-lines . 0)
     (tool-bar-lines . 0)
     (unsplittable   . t)
     (left-fringe    . 0)
+    (right-fringe   . 0)
     (title          . "EMACS INPUT DISPLAY"))
   "Parameters to use when creating the input display frame.
 Any parameter supported by a frame may be added."
@@ -77,7 +84,9 @@ Any parameter supported by a frame may be added."
                      #'emacs-input-display-mode
                      emacs-input-display-frame-parameters
                      #'emacs-input-display--cleanup-hook)
-  (add-hook 'post-command-hook #'emacs-input-display--command-hook))
+  (add-hook 'post-command-hook #'emacs-input-display--command-hook)
+  (when emacs-input-display--frame
+    (emacs-input-display--setup-frame)))
 
 (defun emacs-input-display--setup-buffer ()
   "Set up a buffer for showing lossage.
@@ -87,6 +96,14 @@ checking that is the responsibility of the caller."
   (with-current-buffer
           (setq emacs-input-display--buffer (get-buffer-create " EMACS INPUT DISPLAY"))
     (emacs-input-display-mode)))
+
+(defun emacs-input-display--setup-frame ()
+  "Set up a frame for showing lossage.
+
+This function does not check whether the frame is set up, so
+checking that is the responsibility of the caller."
+  (set-face-attribute 'default emacs-input-display--frame :height emacs-input-display-font-size)
+  (setq mode-line-format nil))
 
 (define-derived-mode emacs-input-display-mode fundamental-mode "Input display"
   "Major mode for showing live lossage.
@@ -116,7 +133,9 @@ This mode shouldn't be used manually."
   (with-current-buffer emacs-input-display--buffer
     (read-only-mode -1)
     (delete-region (point-min) (point-max))
-    (insert (substring (emacs-input-display--get-formatted-losage) (- 0 60)))
+    (newline)
+    (insert (substring (emacs-input-display--get-formatted-losage)
+                       (- 0 (1- emacs-input-display-width))))
     (read-only-mode +1)))
 
 (defun emacs-input-display--cleanup-hook ()
