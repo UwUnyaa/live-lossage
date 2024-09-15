@@ -30,6 +30,7 @@
 (require 'dash)
 
 ;;; Customization
+
 (defgroup emacs-input-display nil
   "Show live lossage in a separate frame."
   :prefix "emacs-input-display-"
@@ -57,7 +58,9 @@
     ("M-S-<return>"    . "M-S-RET"))
   "Replacements for keys."
   :group 'emacs-input-display
-  :type '(repeat (cons string string)))
+  :type
+  '(repeat
+    (cons string string)))
 
 (defcustom emacs-input-display-ignored-keys
   '("<down-mouse-1>"
@@ -76,7 +79,8 @@
     "<switch-frame>")
   "Keys to not dispplay."
   :group 'emacs-input-display
-  :type '(list string))
+  :type
+  '(list string))
 
 (defcustom emacs-input-display-frame-parameters
   `((minibuffer     . nil)
@@ -92,9 +96,11 @@
   "Parameters to use when creating the input display frame.
 Any parameter supported by a frame may be added."
   :group 'emacs-input-display
-  :type '(repeat (cons :format "%v"
-		       (symbol :tag "Parameter")
-		       (sexp :tag "Value"))))
+  :type
+  '(repeat
+    (cons :format "%v"
+          (symbol :tag "Parameter")
+          (sexp :tag "Value"))))
 
 ;;; Variables
 (defvar emacs-input-display--buffer nil
@@ -106,29 +112,15 @@ Any parameter supported by a frame may be added."
 (defvar emacs-input-display--cached-frame nil
   "The frame that was last created, then removed from the display.")
 
-(defun emacs-input-display (&optional arg)
-  (interactive)
-  (unless emacs-input-display--buffer
-    (emacs-input-display--setup-buffer))
-  (dframe-frame-mode arg
-                     'emacs-input-display--frame
-                     'emacs-input-display--cached-frame
-                     'emacs-input-display--buffer
-                     "EMACS INPUT DISPLAY"
-                     #'emacs-input-display-mode
-                     emacs-input-display-frame-parameters
-                     #'emacs-input-display--cleanup-hook)
-  (add-hook 'post-command-hook #'emacs-input-display--command-hook)
-  (when emacs-input-display--frame
-    (emacs-input-display--setup-frame)))
-
+;;; Functions
 (defun emacs-input-display--setup-buffer ()
   "Set up a buffer for showing lossage.
 
 This function does not check whether the buffer is set up, so
 checking that is the responsibility of the caller."
   (with-current-buffer
-          (setq emacs-input-display--buffer (get-buffer-create " EMACS INPUT DISPLAY"))
+      (setq emacs-input-display--buffer
+            (get-buffer-create " EMACS INPUT DISPLAY"))
     (emacs-input-display-mode)))
 
 (defun emacs-input-display--setup-frame ()
@@ -150,11 +142,14 @@ This mode shouldn't be used manually."
 	  buffer-read-only t)
     (setq-local frame-title-format "Input display")))
 
-(defun emacs-input-display--pretty-print-key (key)
+(defun emacs-input-display--pretty-print-key
+    (key)
   "Pretty print a single KEY in a nice, terse format."
   (let ((pretty (single-key-description key)))
-    (unless (member pretty emacs-input-display-ignored-keys)
-          (or (cdr (assoc-string pretty emacs-input-display-formatting-alist)) pretty))))
+    (unless
+        (member pretty emacs-input-display-ignored-keys)
+      (or (cdr (assoc-string pretty emacs-input-display-formatting-alist))
+          pretty))))
 
 (defun emacs-input-display--get-formatted-losage ()
   "Get losage formatted for display in the buffer."
@@ -170,13 +165,32 @@ This mode shouldn't be used manually."
     (read-only-mode -1)
     (delete-region (point-min) (point-max))
     (newline)
-    (insert (substring (emacs-input-display--get-formatted-losage)
-                       (- 0 (1- emacs-input-display-width))))
+    (insert
+     (substring
+      (emacs-input-display--get-formatted-losage)
+      (- 0 (1- emacs-input-display-width))))
     (read-only-mode +1)))
 
 (defun emacs-input-display--cleanup-hook ()
   "Clean up after `emacs-input-display'."
   (remove-hook 'post-command-hook #'emacs-input-display--command-hook))
+
+;;;###autoload
+(defun emacs-input-display (&optional arg)
+  (interactive)
+  (unless emacs-input-display--buffer
+    (emacs-input-display--setup-buffer))
+  (dframe-frame-mode arg
+                     'emacs-input-display--frame
+                     'emacs-input-display--cached-frame
+                     'emacs-input-display--buffer
+                     "EMACS INPUT DISPLAY"
+                     #'emacs-input-display-mode
+                     emacs-input-display-frame-parameters
+                     #'emacs-input-display--cleanup-hook)
+  (add-hook 'post-command-hook #'emacs-input-display--command-hook)
+  (when emacs-input-display--frame
+    (emacs-input-display--setup-frame)))
 
 (provide 'emacs-input-display)
 
