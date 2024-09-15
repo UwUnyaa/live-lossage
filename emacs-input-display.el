@@ -120,7 +120,8 @@ This mode shouldn't be used manually."
   "Pretty print a single KEY in a nice, terse format."
   ;; TODO: use a lookup to actually do translations like <return> -> RET
   ;; TODO: maybe add (xN) in some cases when certain keys (like DEL) are pressed multiple times?
-  (single-key-description key t))
+  (let ((pretty (single-key-description key)))
+    (or (cdr (assoc-string pretty emacs-input-display-formatting-alist)) pretty)))
 
 (defun emacs-input-display--get-formatted-losage ()
   "Get losage formatted for display in the buffer."
