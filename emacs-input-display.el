@@ -153,8 +153,6 @@ This mode shouldn't be used manually."
 
 (defun emacs-input-display--pretty-print-key (key)
   "Pretty print a single KEY in a nice, terse format."
-  ;; TODO: use a lookup to actually do translations like <return> -> RET
-  ;; TODO: maybe add (xN) in some cases when certain keys (like DEL) are pressed multiple times?
   (let ((pretty (single-key-description key)))
     (unless (member pretty emacs-input-display-ignored-keys)
           (or (cdr (assoc-string pretty emacs-input-display-formatting-alist)) pretty))))
