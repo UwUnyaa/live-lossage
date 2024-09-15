@@ -177,6 +177,9 @@ This mode shouldn't be used manually."
 
 ;;;###autoload
 (defun emacs-input-display (&optional arg)
+  "Open a window with a live lossage display.
+
+If called again, the window will be closed and cleaned up."
   (interactive)
   (unless emacs-input-display--buffer
     (emacs-input-display--setup-buffer))
