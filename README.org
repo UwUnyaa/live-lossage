@@ -1,15 +1,34 @@
-#+TITLE: emacs-input-display
+#+TITLE: =emacs-input-display= - Live lossage preview
 
 This repository will contain a basic input display meant for enhancing streams
-using Emacs.
+and screencasts using Emacs.
 
-The name is initial for now.
+The name is temporary for now. I will have to come up with something better.
 
-* Things to do
+While other similar tools exist, this one is just made by me to have a coding
+stream.
 
+* How to use
+1. Install this package with a package manager of your choice or load
+   =emacs-input-display.el=.
+2. =M-x emacs-input-display=
+
+A frame with recent outputs will pop up. Feel free to add an OBS capture for
+it, crop and chroma key it to your liking. The title is intentionally static
+to make it easy to have it work reliably.
+
+* Things to do (remove once done)
 ** TODO come up with a better name
 The current one doesn't have a nice ring to it, and contains the word Emacs,
 which would be a redundant word in a feature name.
 
-** TODO make sure I have proper copyright headers and package ones
-I want to be able to install this with my package manager (straight).
+** TODO bury the new frame when it's created
+
+** TODO use more optimal data structures and optimize the code
+- hashes and vectors, maybe there's a set data type?
+- just use a loop for formatting things to keep memory allocations down
+
+** TODO conditionally display keys to begin with if possible
+This is to prevent doing key-logging on password prompts. Stretch goal of
+sorts if it's even possible AT ALL, would require re-working some parts of the
+code.
