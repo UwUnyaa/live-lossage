@@ -44,6 +44,18 @@
   :group 'emacs-input-display
   :type 'integer)
 
+(defcustom emacs-input-display-formatting-alist
+  '(("<return>"        . "RET")
+    ("<backspace>"     . "DEL")
+    ("<tab>"           . "TAB")
+    ("S-<iso-lefttab>" . "S-TAB")
+    ("<escape>"        . "ESC")
+    ("M-<return>"      . "M-RET")
+    ("M-S-<return>"    . "M-S-RET"))
+  "Replacements for keys."
+  :group 'emacs-input-display
+  :type '(repeat (cons string string)))
+
 (defcustom emacs-input-display-frame-parameters
   `((minibuffer     . nil)
     (width          . ,emacs-input-display-width)
