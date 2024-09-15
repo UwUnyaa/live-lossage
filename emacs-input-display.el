@@ -39,7 +39,7 @@
   :type 'integer)
 
 (defcustom emacs-input-display-font-size
-  200
+  250
   "Size of the font in the input display frame."
   :group 'emacs-input-display
   :type 'integer)
