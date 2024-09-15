@@ -59,22 +59,18 @@
 (defcustom emacs-input-display-ignored-keys
   '("<down-mouse-1>"
     "<mouse-1>"
+    "<drag-mouse-1>"
     "<down-mouse-2>"
     "<mouse-2>"
     "<down-mouse-3>"
     "<mouse-3>"
-    "<double-down-mouse-1>"
-    "<double-mouse-1>"
     "<help-echo>"
     "<mouse-movement>"
     "<wheel-down>"
-    "<double-wheel-down>"
-    "<triple-wheel-down>"
     "<wheel-up>"
     "<double-wheel-up>"
     "<triple-wheel-up>"
-    "<switch-frame>"
-    "<drag-mouse-1>")
+    "<switch-frame>")
   "Keys to not dispplay."
   :group 'emacs-input-display
   :type '(list string))
