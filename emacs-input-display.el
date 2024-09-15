@@ -56,6 +56,12 @@
   :group 'emacs-input-display
   :type '(repeat (cons string string)))
 
+(defcustom emacs-input-display-ignored-keys
+  '("<down-mouse-1>" "<mouse-1>")
+  "Keys to not dispplay."
+  :group 'emacs-input-display
+  :type '(list string))
+
 (defcustom emacs-input-display-frame-parameters
   `((minibuffer     . nil)
     (width          . ,emacs-input-display-width)
@@ -133,7 +139,8 @@ This mode shouldn't be used manually."
   ;; TODO: use a lookup to actually do translations like <return> -> RET
   ;; TODO: maybe add (xN) in some cases when certain keys (like DEL) are pressed multiple times?
   (let ((pretty (single-key-description key)))
-    (or (cdr (assoc-string pretty emacs-input-display-formatting-alist)) pretty)))
+    (unless (member pretty emacs-input-display-ignored-keys)
+          (or (cdr (assoc-string pretty emacs-input-display-formatting-alist)) pretty))))
 
 (defun emacs-input-display--get-formatted-losage ()
   "Get losage formatted for display in the buffer."
