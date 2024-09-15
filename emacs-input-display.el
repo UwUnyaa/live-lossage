@@ -23,13 +23,15 @@
 ;; this program. If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
-;; This file provides a way of having a separate emacs frame showing real time
+;; This file provides a way of having a separate Emacs frame showing real time
 ;; lossage display, meant for livestreaming and screencasts.
 
 (require 'dframe)
 (require 'dash)
 
 ;;; Customization
+
+;;; Code:
 
 (defgroup emacs-input-display nil
   "Show live lossage in a separate frame."
@@ -179,7 +181,9 @@ This mode shouldn't be used manually."
 (defun emacs-input-display (&optional arg)
   "Open a window with a live lossage display.
 
-If called again, the window will be closed and cleaned up."
+If called again, the window will be closed and cleaned up.
+
+A nil ARG means toggle."
   (interactive)
   (unless emacs-input-display--buffer
     (emacs-input-display--setup-buffer))
