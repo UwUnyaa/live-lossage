@@ -32,9 +32,15 @@
   :prefix "emacs-input-display-"
   :group 'streaming)
 
+(defcustom emacs-input-display-width
+  80
+  "Width of the input display frame."
+  :group 'emacs-input-display
+  :type 'integer)
+
 (defcustom emacs-input-display-frame-parameters
-  '((minibuffer     . nil)
-    (width          . 80)
+  `((minibuffer     . nil)
+    (width          . emacs-input-display-width)
     (height         . 3)
     (border-width   . 0)
     (menu-bar-lines . 0)
@@ -69,9 +75,9 @@ Any parameter supported by a frame may be added."
                      'emacs-input-display--buffer
                      "EMACS INPUT DISPLAY"
                      #'emacs-input-display-mode
-                     emacs-input-display-frame-parameters)
-  (when emacs-input-display---frame)    ; call timer setup here if needed
-  )
+                     emacs-input-display-frame-parameters
+                     #'emacs-input-display--cleanup-hook)
+  (add-hook 'post-command-hook #'emacs-input-display--command-hook))
 
 (defun emacs-input-display--setup-buffer ()
   "Set up a buffer for showing lossage.
@@ -92,6 +98,30 @@ This mode shouldn't be used manually."
           case-fold-search nil
 	  buffer-read-only t)
     (setq-local frame-title-format "Input display")))
+
+(defun emacs-input-display--pretty-print-key (key)
+  "Pretty print a single KEY in a nice, terse format."
+  ;; TODO: use a lookup to actually do translations like <return> -> RET
+  ;; TODO: maybe add (xN) in some cases when certain keys (like DEL) are pressed multiple times?
+  (single-key-description key t))
+
+(defun emacs-input-display--get-formatted-losage ()
+  "Get losage formatted for display in the buffer."
+  (mapconcat #'emacs-input-display--pretty-print-key
+             (recent-keys)
+             " "))
+
+(defun emacs-input-display--command-hook ()
+  "Handler for the `post-command-hook'."
+  (with-current-buffer emacs-input-display--buffer
+    (read-only-mode -1)
+    (delete-region (point-min) (point-max))
+    (insert (substring (emacs-input-display--get-formatted-losage) (- 0 60)))
+    (read-only-mode +1)))
+
+(defun emacs-input-display--cleanup-hook ()
+  "Clean up after `emacs-input-display'."
+  (remove-hook 'post-command-hook #'emacs-input-display--command-hook))
 
 (provide 'emacs-input-display)
 
