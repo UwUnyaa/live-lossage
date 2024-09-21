@@ -144,6 +144,11 @@ This mode shouldn't be used manually."
 	  buffer-read-only t)
     (setq-local frame-title-format "Input display")))
 
+(defun emacs-input-display--get-last-key ()
+  "Get the last pressed key."
+  (let ((keys (recent-keys)))
+    (aref keys (1- (length keys)))))
+
 (defun emacs-input-display--pretty-print-key
     (key)
   "Pretty print a single KEY in a nice, terse format."
