@@ -145,6 +145,10 @@ This mode shouldn't be used manually."
 	  buffer-read-only t)
     (setq-local frame-title-format "Input display")))
 
+(defun emacs-input-display--get-current-line-length ()
+  "Get the length of the current line in a buffer."
+  (- (line-end-position) (line-beginning-position)))
+
 (defun emacs-input-display--get-last-key ()
   "Get the last pressed key."
   (let ((keys (recent-keys)))
