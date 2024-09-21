@@ -53,6 +53,7 @@
 (defcustom emacs-input-display-formatting-alist
   '(("<return>"        . "RET")
     ("<backspace>"     . "DEL")
+    ("C-S-<backspace>" . "C-S-DEL")
     ("<tab>"           . "TAB")
     ("S-<iso-lefttab>" . "S-TAB")
     ("<escape>"        . "ESC")
