@@ -80,7 +80,7 @@
     "<double-wheel-up>"
     "<triple-wheel-up>"
     "<switch-frame>")
-  "Keys to not dispplay."
+  "Keys to not display."
   :group 'emacs-input-display
   :type
   '(list string))
