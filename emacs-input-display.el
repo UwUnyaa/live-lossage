@@ -188,7 +188,9 @@ This mode shouldn't be used manually."
                  (- emacs-input-display-width key-length 1))
         (emacs-input-display--delete-to-string " "))
       (end-of-line)
-      (insert " " new-key)))
+      (unless (zerop (emacs-input-display--get-current-line-length))
+        (insert " "))
+      (insert new-key)))
     (read-only-mode +1)))
 
 (defun emacs-input-display--cleanup-hook ()
