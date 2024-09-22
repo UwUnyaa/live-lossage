@@ -217,7 +217,8 @@ A nil ARG means toggle."
                      #'emacs-input-display--cleanup-hook)
   (add-hook 'post-command-hook #'emacs-input-display--command-hook)
   (when emacs-input-display--frame
-    (emacs-input-display--setup-frame)))
+    (emacs-input-display--setup-frame)
+    (lower-frame emacs-input-display--frame)))
 
 (provide 'emacs-input-display)
 

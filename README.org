@@ -22,7 +22,13 @@ to make it easy to have it work reliably.
 The current one doesn't have a nice ring to it, and contains the word Emacs,
 which would be a redundant word in a feature name.
 
-** TODO bury the new frame when it's created
+** DONE bury the new frame when it's created
+This might not work in every window manager:
+
+From [[info:elisp#Raising and Lowering][elisp#Raising and Lowering]]:
+#+begin_quote
+Some window managers may refuse to restack windows.
+#+end_quote
 
 ** TODO use more optimal data structures and optimize the code
 - hashes and vectors, maybe there's a set data type?
