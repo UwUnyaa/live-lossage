@@ -155,10 +155,15 @@ This mode shouldn't be used manually."
   "Get the length of the current line in a buffer."
   (- (line-end-position) (line-beginning-position)))
 
-(defun live-lossage--get-last-key ()
-  "Get the last pressed key."
-  (let ((keys (recent-keys)))
-    (aref keys (1- (length keys)))))
+(defun live-lossage--get-last-keys ()
+  "Get the last pressed keys."
+  (let* ((keys (recent-keys t))
+         (index (- (length keys) 2))
+         (last-keys '()))
+    (while (not (consp (aref keys index)))
+      (push (aref keys index) last-keys)
+      (setq index (1- index)))
+    last-keys))
 
 (defun live-lossage--pretty-print-key
     (key)
@@ -180,17 +185,18 @@ This mode shouldn't be used manually."
     (goto-char (point-min))
     (forward-line 1)
     (beginning-of-line)
-    (let* ((new-key (live-lossage--pretty-print-key
-                     (live-lossage--get-last-key)))
-           (key-length (length new-key)))
-      (when new-key
+    (let* ((new-keys (mapconcat
+                      #'live-lossage--pretty-print-key
+                      (live-lossage--get-last-keys) " "))
+           (key-length (length new-keys)))
+      (when (and new-keys (not (string-empty-p new-keys)))
         (while (>= (live-lossage--get-current-line-length)
                    (- live-lossage-width key-length 1))
           (live-lossage--delete-to-string " "))
         (end-of-line)
         (unless (zerop (live-lossage--get-current-line-length))
           (insert " "))
-        (insert new-key)))
+        (insert new-keys)))
     (read-only-mode +1)))
 
 (defun live-lossage--cleanup-hook ()
