@@ -27,8 +27,3 @@ which would be a redundant word in a feature name.
 ** TODO use more optimal data structures and optimize the code
 - hashes and vectors, maybe there's a set data type?
 - just use a loop for formatting things to keep memory allocations down
-
-** TODO conditionally display keys to begin with if possible
-This is to prevent doing key-logging on password prompts. Stretch goal of
-sorts if it's even possible AT ALL, would require re-working some parts of the
-code.
