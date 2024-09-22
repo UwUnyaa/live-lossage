@@ -183,14 +183,14 @@ This mode shouldn't be used manually."
     (let* ((new-key (live-lossage--pretty-print-key
                      (live-lossage--get-last-key)))
            (key-length (length new-key)))
-    (when new-key
-      (while (>= (live-lossage--get-current-line-length)
-                 (- live-lossage-width key-length 1))
-        (live-lossage--delete-to-string " "))
-      (end-of-line)
-      (unless (zerop (live-lossage--get-current-line-length))
-        (insert " "))
-      (insert new-key)))
+      (when new-key
+        (while (>= (live-lossage--get-current-line-length)
+                   (- live-lossage-width key-length 1))
+          (live-lossage--delete-to-string " "))
+        (end-of-line)
+        (unless (zerop (live-lossage--get-current-line-length))
+          (insert " "))
+        (insert new-key)))
     (read-only-mode +1)))
 
 (defun live-lossage--cleanup-hook ()
