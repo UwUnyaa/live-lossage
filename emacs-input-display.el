@@ -171,6 +171,10 @@ This mode shouldn't be used manually."
                             (recent-keys)))
              " "))
 
+(defun emacs-input-display--delete-to-string (string)
+  "Remove characters from point up to STRING."
+  (delete-region (point) (search-forward string)))
+
 (defun emacs-input-display--command-hook ()
   "Handler for the `post-command-hook'."
   (with-current-buffer emacs-input-display--buffer
