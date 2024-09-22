@@ -131,8 +131,14 @@ checking that is the responsibility of the caller."
 
 This function does not check whether the frame is set up, so
 checking that is the responsibility of the caller."
-  (set-face-attribute 'default emacs-input-display--frame :height emacs-input-display-font-size)
-  (setq mode-line-format nil))
+  (set-face-attribute 'default emacs-input-display--frame
+                      :height emacs-input-display-font-size)
+  (setq mode-line-format nil)
+  (read-only-mode -1)
+  (delete-region (point-min) (point-max))
+  ;; set up the newline to keep a margin from the top of the window
+  (newline)
+  (read-only-mode +1))
 
 (define-derived-mode emacs-input-display-mode fundamental-mode "Input display"
   "Major mode for showing live lossage.
@@ -163,14 +169,6 @@ This mode shouldn't be used manually."
       (or (cdr (assoc-string pretty emacs-input-display-formatting-alist))
           pretty))))
 
-(defun emacs-input-display--get-formatted-losage ()
-  "Get losage formatted for display in the buffer."
-  (mapconcat #'identity
-             (-filter #'identity
-                      (-map #'emacs-input-display--pretty-print-key
-                            (recent-keys)))
-             " "))
-
 (defun emacs-input-display--delete-to-string (string)
   "Remove characters from point up to STRING."
   (delete-region (point) (search-forward string)))
@@ -179,12 +177,18 @@ This mode shouldn't be used manually."
   "Handler for the `post-command-hook'."
   (with-current-buffer emacs-input-display--buffer
     (read-only-mode -1)
-    (delete-region (point-min) (point-max))
-    (newline)
-    (insert
-     (substring
-      (emacs-input-display--get-formatted-losage)
-      (- 0 (1- emacs-input-display-width))))
+    (goto-char (point-min))
+    (forward-line 1)
+    (beginning-of-line)
+    (let* ((new-key (emacs-input-display--pretty-print-key
+                     (emacs-input-display--get-last-key)))
+           (key-length (length new-key)))
+    (when new-key
+      (while (>= (emacs-input-display--get-current-line-length)
+                 (- emacs-input-display-width key-length 1))
+        (emacs-input-display--delete-to-string " "))
+      (end-of-line)
+      (insert " " new-key)))
     (read-only-mode +1)))
 
 (defun emacs-input-display--cleanup-hook ()
