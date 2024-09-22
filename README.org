@@ -29,7 +29,3 @@ From [[info:elisp#Raising and Lowering][elisp#Raising and Lowering]]:
 #+begin_quote
 Some window managers may refuse to restack windows.
 #+end_quote
-
-** TODO use more optimal data structures and optimize the code
-- hashes and vectors, maybe there's a set data type?
-- just use a loop for formatting things to keep memory allocations down
