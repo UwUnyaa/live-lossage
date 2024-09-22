@@ -1,4 +1,4 @@
-;;; emacs-input-display.el --- pop up a frame with live lossage display
+;;; live-lossage.el --- pop up a frame with live lossage display
 ;;; -*- lexical-binding:t; coding: utf-8 -*-
 ;;; Version: 0.0.1
 
@@ -33,24 +33,24 @@
 
 ;;; Code:
 
-(defgroup emacs-input-display nil
+(defgroup live-lossage nil
   "Show live lossage in a separate frame."
-  :prefix "emacs-input-display-"
+  :prefix "live-lossage-"
   :group 'streaming)
 
-(defcustom emacs-input-display-width
+(defcustom live-lossage-width
   80
   "Width of the input display frame."
-  :group 'emacs-input-display
+  :group 'live-lossage
   :type 'integer)
 
-(defcustom emacs-input-display-font-size
+(defcustom live-lossage-font-size
   250
   "Size of the font in the input display frame."
-  :group 'emacs-input-display
+  :group 'live-lossage
   :type 'integer)
 
-(defcustom emacs-input-display-formatting-alist
+(defcustom live-lossage-formatting-alist
   '(("<return>"        . "RET")
     ("<backspace>"     . "DEL")
     ("C-S-<backspace>" . "C-S-DEL")
@@ -60,12 +60,12 @@
     ("M-<return>"      . "M-RET")
     ("M-S-<return>"    . "M-S-RET"))
   "Replacements for keys."
-  :group 'emacs-input-display
+  :group 'live-lossage
   :type
   '(repeat
     (cons string string)))
 
-(defcustom emacs-input-display-ignored-keys
+(defcustom live-lossage-ignored-keys
   '("<down-mouse-1>"
     "<mouse-1>"
     "<drag-mouse-1>"
@@ -81,13 +81,13 @@
     "<triple-wheel-up>"
     "<switch-frame>")
   "Keys to not display."
-  :group 'emacs-input-display
+  :group 'live-lossage
   :type
   '(list string))
 
-(defcustom emacs-input-display-frame-parameters
+(defcustom live-lossage-frame-parameters
   `((minibuffer     . nil)
-    (width          . ,emacs-input-display-width)
+    (width          . ,live-lossage-width)
     (height         . 2)
     (border-width   . 0)
     (menu-bar-lines . 0)
@@ -98,7 +98,7 @@
     (title          . "EMACS INPUT DISPLAY"))
   "Parameters to use when creating the input display frame.
 Any parameter supported by a frame may be added."
-  :group 'emacs-input-display
+  :group 'live-lossage
   :type
   '(repeat
     (cons :format "%v"
@@ -106,33 +106,33 @@ Any parameter supported by a frame may be added."
           (sexp :tag "Value"))))
 
 ;;; Variables
-(defvar emacs-input-display--buffer nil
+(defvar live-lossage--buffer nil
   "The buffer used for showing the lossage.")
 
-(defvar emacs-input-display--frame nil
+(defvar live-lossage--frame nil
   "The frame used for showing the lossage.")
 
-(defvar emacs-input-display--cached-frame nil
+(defvar live-lossage--cached-frame nil
   "The frame that was last created, then removed from the display.")
 
 ;;; Functions
-(defun emacs-input-display--setup-buffer ()
+(defun live-lossage--setup-buffer ()
   "Set up a buffer for showing lossage.
 
 This function does not check whether the buffer is set up, so
 checking that is the responsibility of the caller."
   (with-current-buffer
-      (setq emacs-input-display--buffer
+      (setq live-lossage--buffer
             (get-buffer-create " EMACS INPUT DISPLAY"))
-    (emacs-input-display-mode)))
+    (live-lossage-mode)))
 
-(defun emacs-input-display--setup-frame ()
+(defun live-lossage--setup-frame ()
   "Set up a frame for showing lossage.
 
 This function does not check whether the frame is set up, so
 checking that is the responsibility of the caller."
-  (set-face-attribute 'default emacs-input-display--frame
-                      :height emacs-input-display-font-size)
+  (set-face-attribute 'default live-lossage--frame
+                      :height live-lossage-font-size)
   (setq mode-line-format nil)
   (read-only-mode -1)
   (delete-region (point-min) (point-max))
@@ -140,7 +140,7 @@ checking that is the responsibility of the caller."
   (newline)
   (read-only-mode +1))
 
-(define-derived-mode emacs-input-display-mode fundamental-mode "Input display"
+(define-derived-mode live-lossage-mode fundamental-mode "Input display"
   "Major mode for showing live lossage.
 
 This mode shouldn't be used manually."
@@ -151,76 +151,76 @@ This mode shouldn't be used manually."
 	  buffer-read-only t)
     (setq-local frame-title-format "Input display")))
 
-(defun emacs-input-display--get-current-line-length ()
+(defun live-lossage--get-current-line-length ()
   "Get the length of the current line in a buffer."
   (- (line-end-position) (line-beginning-position)))
 
-(defun emacs-input-display--get-last-key ()
+(defun live-lossage--get-last-key ()
   "Get the last pressed key."
   (let ((keys (recent-keys)))
     (aref keys (1- (length keys)))))
 
-(defun emacs-input-display--pretty-print-key
+(defun live-lossage--pretty-print-key
     (key)
   "Pretty print a single KEY in a nice, terse format."
   (let ((pretty (single-key-description key)))
     (unless
-        (member pretty emacs-input-display-ignored-keys)
-      (or (cdr (assoc-string pretty emacs-input-display-formatting-alist))
+        (member pretty live-lossage-ignored-keys)
+      (or (cdr (assoc-string pretty live-lossage-formatting-alist))
           pretty))))
 
-(defun emacs-input-display--delete-to-string (string)
+(defun live-lossage--delete-to-string (string)
   "Remove characters from point up to STRING."
   (delete-region (point) (search-forward string)))
 
-(defun emacs-input-display--command-hook ()
+(defun live-lossage--command-hook ()
   "Handler for the `post-command-hook'."
-  (with-current-buffer emacs-input-display--buffer
+  (with-current-buffer live-lossage--buffer
     (read-only-mode -1)
     (goto-char (point-min))
     (forward-line 1)
     (beginning-of-line)
-    (let* ((new-key (emacs-input-display--pretty-print-key
-                     (emacs-input-display--get-last-key)))
+    (let* ((new-key (live-lossage--pretty-print-key
+                     (live-lossage--get-last-key)))
            (key-length (length new-key)))
     (when new-key
-      (while (>= (emacs-input-display--get-current-line-length)
-                 (- emacs-input-display-width key-length 1))
-        (emacs-input-display--delete-to-string " "))
+      (while (>= (live-lossage--get-current-line-length)
+                 (- live-lossage-width key-length 1))
+        (live-lossage--delete-to-string " "))
       (end-of-line)
-      (unless (zerop (emacs-input-display--get-current-line-length))
+      (unless (zerop (live-lossage--get-current-line-length))
         (insert " "))
       (insert new-key)))
     (read-only-mode +1)))
 
-(defun emacs-input-display--cleanup-hook ()
-  "Clean up after `emacs-input-display'."
-  (remove-hook 'post-command-hook #'emacs-input-display--command-hook))
+(defun live-lossage--cleanup-hook ()
+  "Clean up after `live-lossage'."
+  (remove-hook 'post-command-hook #'live-lossage--command-hook))
 
 ;;;###autoload
-(defun emacs-input-display (&optional arg)
+(defun live-lossage (&optional arg)
   "Open a window with a live lossage display.
 
 If called again, the window will be closed and cleaned up.
 
 A nil ARG means toggle."
   (interactive)
-  (unless emacs-input-display--buffer
-    (emacs-input-display--setup-buffer))
+  (unless live-lossage--buffer
+    (live-lossage--setup-buffer))
   (dframe-frame-mode arg
-                     'emacs-input-display--frame
-                     'emacs-input-display--cached-frame
-                     'emacs-input-display--buffer
+                     'live-lossage--frame
+                     'live-lossage--cached-frame
+                     'live-lossage--buffer
                      "EMACS INPUT DISPLAY"
-                     #'emacs-input-display-mode
-                     emacs-input-display-frame-parameters
-                     #'emacs-input-display--cleanup-hook)
-  (add-hook 'post-command-hook #'emacs-input-display--command-hook)
-  (when emacs-input-display--frame
-    (emacs-input-display--setup-frame)
-    (lower-frame emacs-input-display--frame)))
+                     #'live-lossage-mode
+                     live-lossage-frame-parameters
+                     #'live-lossage--cleanup-hook)
+  (add-hook 'post-command-hook #'live-lossage--command-hook)
+  (when live-lossage--frame
+    (live-lossage--setup-frame)
+    (lower-frame live-lossage--frame)))
 
-(provide 'emacs-input-display)
+(provide 'live-lossage)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; emacs-input-display.el ends here
+;;; live-lossage.el ends here

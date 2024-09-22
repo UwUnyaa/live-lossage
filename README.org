@@ -1,4 +1,4 @@
-#+TITLE: =emacs-input-display= - Live lossage preview
+#+TITLE: =live-lossage= - Live lossage preview
 
 This repository will contain a basic input display meant for enhancing streams
 and screencasts using Emacs.
@@ -10,18 +10,14 @@ stream.
 
 * How to use
 1. Install this package with a package manager of your choice or load
-   =emacs-input-display.el=.
-2. =M-x emacs-input-display=
+   =live-lossage.el=.
+2. =M-x live-lossage=
 
 A frame with recent outputs will pop up. Feel free to add an OBS capture for
 it, crop and chroma key it to your liking. The title is intentionally static
 to make it easy to have it work reliably.
 
 * Things to do (remove once done)
-** TODO come up with a better name
-The current one doesn't have a nice ring to it, and contains the word Emacs,
-which would be a redundant word in a feature name.
-
 ** DONE bury the new frame when it's created
 This might not work in every window manager:
 
